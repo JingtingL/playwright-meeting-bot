@@ -1,0 +1,8 @@
+node_modules/
+.env
+media/recordings/
+media/library/*.y4m
+media/library/*.wav
+media/debug-*.png
+public/
+src/server.js

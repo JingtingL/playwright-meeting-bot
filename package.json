@@ -1,0 +1,20 @@
+{
+  "name": "playwright-meeting-bot",
+  "version": "1.0.0",
+  "main": "src/bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "playwright": "^1.60.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "cors": "^2.8.5"
+  }
+}

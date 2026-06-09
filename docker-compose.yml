@@ -1,0 +1,29 @@
+services:
+  meeting-bot:
+    build: .
+    container_name: playwright-bot
+    
+    # Keep container alive so you can exec into it
+    tty: true
+    stdin_open: true
+
+    volumes:
+      # Your source code — edit on Mac, runs in container
+      - ./src:/app/src
+      # Media library — shared between Mac and container
+      - ./media:/app/media
+      - ./public:/app/public
+    env_file:
+      - .env
+
+    environment:
+      # Tell Playwright to use the virtual display
+      - DISPLAY=:99
+      # PulseAudio runtime dir
+      - PULSE_RUNTIME_PATH=/tmp/pulse
+
+    # Needed for virtual audio/display setup
+    cap_add:
+      - SYS_ADMIN
+
+    shm_size: '2gb'   # Chromium needs extra shared memory
