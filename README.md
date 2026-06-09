@@ -405,3 +405,82 @@ OPENAI_API_KEY=your_openai_key
 
 **Recommended approach:**
 Start with Layer 1 (BlackHole) first — get clean audio flowing on your Mac. Then add Layer 2 (Gemini) to classify it. Only add Layer 3 (OpenAI voice) once the classification is working reliably. Each layer is independent and can be tested on its own before wiring them together.
+
+---
+
+## Platform Compatibility
+
+### Does this work on non-Mac machines?
+
+**Yes — with minor differences.**
+
+The bot runs inside Docker (Linux), so the core bot itself works identically on any machine that can run Docker. The only platform-specific parts are on the **host machine** side.
+
+---
+
+### Windows
+
+**Requirements:**
+- [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/) with WSL2 backend enabled
+- Git for Windows or WSL2 terminal
+
+**What works the same:**
+- Everything inside the Docker container runs identically
+- Bot joins meetings, records, plays video — all the same
+
+**What's different:**
+- Recordings save to `media/recordings/` — open them with VLC on Windows (built-in Windows Media Player may not support H.264 baseline)
+- The BlackHole extension (Layer 1) is **Mac-only**. Windows equivalent is [VB-Audio Virtual Cable](https://vb-audio.com/Cable/) (free)
+- Replace `brew install blackhole-2ch` with the VB-Audio installer
+
+**Run commands are identical:**
+```bash
+docker compose up -d
+docker compose exec meeting-bot bash
+ZOOM_LINK="your_link" node src/bot.js
+```
+
+---
+
+### Linux (Ubuntu / Debian)
+
+**Requirements:**
+```bash
+# Install Docker
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-plugin
+sudo usermod -aG docker $USER
+# Log out and back in for group change to take effect
+```
+
+**What works the same:**
+- Everything — Linux is actually the most native environment since the container runs Linux anyway
+
+**What's different:**
+- BlackHole extension (Layer 1) is Mac-only. Linux equivalent is already built in — use PulseAudio's `module-loopback` or `pavucontrol` to tap audio at the host level
+- Recordings open natively in VLC or any Linux media player
+
+**Run commands are identical:**
+```bash
+docker compose up -d
+docker compose exec meeting-bot bash
+ZOOM_LINK="your_link" node src/bot.js
+```
+
+---
+
+### Platform Comparison Summary
+
+| Feature | Mac | Windows | Linux |
+|---|---|---|---|
+| Docker support | ✅ Docker Desktop | ✅ Docker Desktop + WSL2 | ✅ Native Docker |
+| Bot joins meeting | ✅ | ✅ | ✅ |
+| Record screen + audio | ✅ | ✅ | ✅ |
+| Play video into meeting | ✅ | ✅ | ✅ |
+| Recording plays back natively | ✅ QuickTime | ⚠️ Use VLC | ✅ VLC / any player |
+| BlackHole audio tap (Layer 1) | ✅ BlackHole | ⚠️ VB-Audio Virtual Cable | ⚠️ PulseAudio loopback |
+| ARM64 support | ✅ Apple Silicon | ✅ x86_64 | ✅ x86_64 / ARM64 |
+
+> **Note for Windows users:** Make sure WSL2 is enabled in Docker Desktop settings under
+> **Settings → General → Use the WSL2 based engine**. Without this, volume mounts
+> may be slow or unreliable.
