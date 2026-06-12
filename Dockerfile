@@ -8,8 +8,13 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/ms-playwright/chromium-1223/chrome-linux/chrome
+
 COPY package*.json ./
 RUN npm install
+
+COPY . .
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

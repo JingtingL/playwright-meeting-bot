@@ -614,15 +614,15 @@ async function waitForSelection(page, maxOptions) {
 // ─────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────
-async function main() {
-  const rawLink = process.env.ZOOM_LINK || '';
+async function main(meetingLink) {
+  const rawLink = meetingLink || process.env.ZOOM_LINK || '';
   if (!rawLink) {
-    console.error('Error: Please provide a ZOOM_LINK environment variable.');
+    console.error('Error: Please provide a ZOOM_LINK environment variable or meeting URL.');
     process.exit(1);
   }
 
-  const meetingLink = normalizeMeetingLink(rawLink);
-  console.log(`[Step 1] Meeting link normalized: ${meetingLink}`);
+  const meetingLinkNormalized = normalizeMeetingLink(rawLink);
+  console.log(`[Step 1] Meeting link normalized: ${meetingLinkNormalized}`);
 
   prepareVideoForCapture();
 
@@ -635,7 +635,7 @@ async function main() {
 
   await signInToZoom(page);
 
-  const joined = await joinMeeting(page, meetingLink);
+  const joined = await joinMeeting(page, meetingLinkNormalized);
   if (!joined) {
     console.error('[Main] Failed to join meeting — exiting');
     await context.close();
@@ -649,4 +649,8 @@ async function main() {
   await browser.close();
 }
 
-main().catch(console.error);
+async function runZoomBot(meetingUrl) {
+  await main(meetingUrl);
+}
+
+module.exports = { runZoomBot };
